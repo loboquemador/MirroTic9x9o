@@ -1,0 +1,246 @@
+:root {
+  --x: #FD2288;
+  --o: #00E8CA;
+  --line: #333;
+  --bg: #000;
+  --fg: #fff;
+  /* Board geometry in abstract units — mirrored in script.js (S, g, G) */
+  --u: calc(min(84vw, 58vh, 520px) / 67);
+  --cell: calc(var(--u) * 10);
+  --gap: calc(var(--u) * 1.4);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Raleway', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5vh;
+  padding: 3vh 16px 4vh;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 100;
+  letter-spacing: 0.04em;
+  margin: 0;
+  text-align: center;
+}
+
+#info-icon {
+  font-size: 0.4em;
+  vertical-align: super;
+  cursor: help;
+  opacity: 0.6;
+  transition: opacity .2s;
+}
+#info-icon:hover, #info-icon:focus { opacity: 1; outline: none; }
+
+#table {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(16px, 4vw, 56px);
+  width: 100%;
+  max-width: 1000px;
+}
+
+.score {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 200;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  padding-bottom: 14px;
+  opacity: 0.3;
+  transition: opacity .3s ease;
+}
+.score.X { color: var(--x); justify-self: end; text-align: right; }
+.score.O { color: var(--o); justify-self: start; }
+.score::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  width: 0;
+  background: currentColor;
+  transition: width .3s ease;
+}
+.score.X::after { right: 0; }
+.score.O::after { left: 0; }
+.score.active { opacity: 1; }
+.score.active::after { width: 100%; }
+.score.thinking::after { animation: think 0.9s ease-in-out infinite; }
+@keyframes think { 50% { opacity: .25; } }
+
+#board-wrap { position: relative; }
+
+#board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, var(--cell));
+  grid-template-rows: repeat(6, var(--cell));
+  gap: var(--gap);
+}
+
+#layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.cell {
+  position: relative;
+  z-index: 1;
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--cl, var(--line));
+  border-radius: calc(var(--u) * 2.2);
+  padding: 0;
+  cursor: pointer;
+  transition: border-color .2s ease, background-color .2s ease;
+}
+.cell.alt { --cl: #555; }
+.cell:focus-visible { outline: 1px solid var(--fg); outline-offset: 2px; }
+.cell.filled { border-color: transparent; cursor: default; }
+body[data-turn="X"] .cell:not(.filled):hover { border-color: var(--x); background: rgba(253, 34, 136, .08); }
+body[data-turn="O"] .cell:not(.filled):hover { border-color: var(--o); background: rgba(0, 232, 202, .08); }
+body.locked .cell { cursor: default; }
+body.locked .cell:not(.filled):hover { border-color: var(--cl, var(--line)); background: transparent; }
+
+/* SVG layer */
+.area { opacity: .24; }
+.area.X { fill: var(--x); }
+.area.O { fill: var(--o); }
+.sym { fill: none; stroke-width: 1.1; stroke-linecap: round; }
+.sym.X { stroke: var(--x); }
+.sym.O { stroke: var(--o); }
+.sym.new path, .sym.new circle {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw .32s ease-out forwards;
+}
+.sym.new.mirror path, .sym.new.mirror circle { animation-delay: .22s; }
+.sym.new path:nth-child(2) { animation-delay: .12s; }
+.sym.new.mirror path:nth-child(2) { animation-delay: .34s; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.last { fill: var(--fg); }
+.run-bg { stroke: var(--bg); stroke-width: 2.8; stroke-linecap: round; }
+.run { stroke-width: 1.3; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .5s ease-out forwards; }
+.run.X { stroke: var(--x); }
+.run.O { stroke: var(--o); }
+
+#game-description {
+  position: absolute;
+  inset: -12px;
+  z-index: 10;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px;
+  background: rgba(0, 0, 0, .92);
+  border: 1px solid var(--line);
+  text-align: center;
+  font-weight: 400;
+  line-height: 1.5;
+  text-wrap: pretty;
+  overflow-y: auto;
+}
+#game-description p { margin: 0; }
+#game-description strong { font-weight: 600; }
+
+#match {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 420px;
+}
+
+#status {
+  min-height: 1.5em;
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: center;
+  text-wrap: pretty;
+}
+#status.X, #status.O { font-size: 1.25rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+#status.X { color: var(--x); }
+#status.O { color: var(--o); }
+
+#round-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  text-align: center;
+}
+#round-name { font-size: 1rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+#round-sub { font-size: .85rem; font-weight: 400; color: #9a9a9a; }
+
+#scoreboard {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  min-width: 260px;
+}
+#scoreboard th, #scoreboard td {
+  padding: 6px 18px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+  font-weight: 400;
+}
+#scoreboard th[scope="row"] { text-align: left; color: #9a9a9a; }
+#scoreboard thead th { font-weight: 600; }
+#scoreboard .X { color: var(--x); }
+#scoreboard .O { color: var(--o); }
+#scoreboard tr.current th[scope="row"] { color: var(--fg); }
+#scoreboard tr.current th[scope="row"]::after { content: ' •'; }
+#sb-total th, #sb-total td { border-bottom: none; border-top: 1px solid #555; font-weight: 600; }
+#sb-total td.win { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+
+#start-round2 { border-color: var(--fg); font-weight: 600; }
+#start-round2[hidden] { display: none; }
+
+#controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.seg { display: flex; }
+.seg[hidden] { display: none; }
+
+button:not(.cell) {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: .08em;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 12px 22px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
+}
+button:not(.cell):hover { border-color: var(--fg); }
+.seg button + button { margin-left: -1px; }
+.seg button[aria-checked="true"] { border-color: var(--fg); position: relative; z-index: 1; font-weight: 600; }
+
+@media (max-width: 640px) {
+  :root { --u: calc(min(92vw, 60vh) / 67); }
+  #table { grid-template-columns: 1fr 1fr; row-gap: 20px; }
+  #board-wrap { grid-column: 1 / -1; grid-row: 2; justify-self: center; }
+  .score.X { grid-row: 1; justify-self: start; text-align: left; }
+  .score.O { grid-row: 1; justify-self: end; text-align: right; }
+  .score.X::after { left: 0; right: auto; }
+  .score.O::after { right: 0; left: auto; }
+}

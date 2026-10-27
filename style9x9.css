@@ -1,0 +1,31 @@
+/* MirroTic 9×9 overrides on top of style.css. Geometry: 9 cells of 10u, 8 gaps of 1.4u = 101.2u. */
+:root { --u: calc(min(88vw, 60vh, 620px) / 101.2); }
+#board {
+  grid-template-columns: repeat(9, var(--cell));
+  grid-template-rows: repeat(9, var(--cell));
+}
+.variant { font-weight: 200; opacity: .7; }
+#round-moves { font-size: .85rem; font-weight: 400; color: #9a9a9a; font-variant-numeric: tabular-nums; }
+#online { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+#online[hidden], .net-view[hidden], #net-rejoin[hidden], #reveal[hidden], #new-game[hidden] { display: none; }
+.net-view { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
+#net-wait { flex-direction: column; }
+.net-or, .net-label { font-size: .85rem; color: #9a9a9a; letter-spacing: .14em; text-transform: uppercase; }
+.net-join { display: flex; margin: 0; }
+.net-join button { margin-left: -1px; }
+#net-code {
+  font-family: inherit; font-size: .95rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--fg); background: transparent; border: 1px solid var(--line);
+  padding: 12px 16px; min-height: 44px; width: 10em; border-radius: 0; outline: none;
+}
+#net-code:focus { border-color: var(--fg); }
+#net-code::placeholder { color: #666; letter-spacing: .08em; text-transform: none; }
+.net-code { font-size: clamp(2rem, 6vw, 3rem); font-weight: 200; letter-spacing: .3em; padding-left: .3em; user-select: all; }
+.net-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+#net-msg { font-size: .9rem; color: #9a9a9a; text-align: center; text-wrap: pretty; }
+#net-msg:empty { display: none; }
+#reveal { font-size: .85rem; color: #9a9a9a; line-height: 1.6; text-align: center; text-wrap: pretty; }
+#reveal strong { color: var(--fg); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; font-size: .8rem; }
+@media (max-width: 640px) {
+  :root { --u: calc(min(94vw, 60vh) / 101.2); }
+}

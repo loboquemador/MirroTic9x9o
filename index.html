@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;400;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style9x9.css">
+  <title>MirroTic 9×9</title>
+  <link rel="icon" href="favicon.ico">
+</head>
+<body>
+  <header>
+    <h1>MirroTic <span class="variant">9×9</span> <span id="info-icon" tabindex="0" aria-describedby="game-description">ⓘ</span></h1>
+    <div id="round-label" aria-live="polite">
+      <span id="round-name">Round 1 of 2</span>
+      <span id="round-sub">30 moves · highest score wins</span>
+    </div>
+  </header>
+
+  <main id="table">
+    <div id="score-x" class="score X" aria-live="polite">0</div>
+
+    <div id="board-wrap">
+      <div id="board" role="grid" aria-label="MirroTic 9×9 board">
+        <svg id="layer" aria-hidden="true"></svg>
+      </div>
+      <div id="game-description" role="tooltip">
+        <p>Experimental variant on a 9×9 board made of nine 3×3 quadrants.</p>
+        <p><strong>Mirroring:</strong> Each round, eight quadrants are secretly paired, and each pair gets a random mirror rule (x axis, y axis, or both). One hidden quadrant is unpaired: moves there are not mirrored.</p>
+        <p><strong>Game:</strong> 30 moves, X starts. Lines of 3 or more score n × (n − 2). The highest score wins.</p>
+      </div>
+    </div>
+
+    <div id="score-o" class="score O" aria-live="polite">0</div>
+  </main>
+
+  <section id="match">
+    <div id="status" aria-live="polite"></div>
+    <div id="reveal" hidden></div>
+    <div id="online" hidden>
+      <div id="net-lobby" class="net-view">
+        <button id="net-host" type="button">Host a game</button>
+        <span class="net-or">or</span>
+        <form id="net-join" class="net-join">
+          <input id="net-code" maxlength="6" placeholder="Enter code" autocomplete="off" spellcheck="false" aria-label="Game code">
+          <button type="submit">Join</button>
+        </form>
+      </div>
+      <div id="net-wait" class="net-view" hidden>
+        <span class="net-label">Your code</span>
+        <div id="net-code-show" class="net-code"></div>
+        <div class="net-row">
+          <button id="net-copy-code" type="button">Copy code</button>
+          <button id="net-copy-link" type="button">Copy link</button>
+          <button id="net-cancel" type="button">Cancel</button>
+        </div>
+      </div>
+      <div id="net-msg" aria-live="polite"></div>
+      <button id="net-rejoin" type="button" hidden>Rejoin</button>
+    </div>
+  </section>
+
+  <footer id="controls">
+    <button id="new-game" type="button">New game</button>
+    <div id="mode" class="seg" role="radiogroup" aria-label="Opponent">
+      <button type="button" role="radio" data-mode="ai" aria-checked="true">vs AI</button>
+      <button type="button" role="radio" data-mode="pvp" aria-checked="false">2 players</button>
+      <button type="button" role="radio" data-mode="online" aria-checked="false">Online</button>
+    </div>
+    <div id="side" class="seg" role="radiogroup" aria-label="Your symbol">
+      <button type="button" role="radio" data-side="X" aria-checked="true">Play X</button>
+      <button type="button" role="radio" data-side="O" aria-checked="false">Play O</button>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <script src="bot9.js"></script>
+  <script src="script9x9.js"></script>
+</body>
+</html>
