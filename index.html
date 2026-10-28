@@ -19,12 +19,68 @@
     </div>
   </header>
 
+  <div id="game-bar"><button id="new-game" type="button">New game</button></div>
+
   <main id="table">
     <div id="score-x" class="score X" aria-live="polite">0</div>
 
     <div id="board-wrap">
       <div id="board" role="grid" aria-label="MirroTic 9×9 board">
         <svg id="layer" aria-hidden="true"></svg>
+      </div>
+      <div id="setup" class="setup" role="dialog" aria-modal="true" aria-labelledby="setup-title">
+        <div class="step" data-step="mode">
+          <h2 id="setup-title" class="setup-title">New game</h2>
+          <div class="choice-list">
+            <button type="button" class="choice" data-mode="ai"><span class="choice-main">vs AI</span><span class="choice-sub">Play the computer</span></button>
+            <button type="button" class="choice" data-mode="pvp"><span class="choice-main">Hot seat</span><span class="choice-sub">Two players, one screen</span></button>
+            <button type="button" class="choice" data-mode="online"><span class="choice-main">Online</span><span class="choice-sub">Play a friend with a code</span></button>
+          </div>
+          <button type="button" class="setup-link" data-act="cancel">Back to game</button>
+        </div>
+        <div class="step" data-step="level" hidden>
+          <h2 class="setup-title">AI level</h2>
+          <div class="level-show"><span id="level-num" class="level-num"></span><span id="level-name" class="level-name"></span><span id="level-elo" class="level-elo"></span></div>
+          <div id="level" class="seg level-seg" role="radiogroup" aria-label="AI difficulty"></div>
+          <div class="setup-nav">
+            <button type="button" class="setup-link" data-act="back">Back</button>
+            <button type="button" class="setup-next" data-act="next">Next</button>
+          </div>
+        </div>
+        <div class="step" data-step="side" hidden>
+          <h2 class="setup-title">Choose your symbol</h2>
+          <div class="side-pick">
+            <button type="button" class="side-btn X" data-side="X"><span class="side-sym">×</span><span class="choice-sub">Moves first</span></button>
+            <button type="button" class="side-btn O" data-side="O"><span class="side-sym">○</span><span class="choice-sub">Moves second</span></button>
+            <button type="button" class="side-btn R" data-side="random"><span class="side-sym">?</span><span class="choice-sub">Random</span></button>
+          </div>
+          <button type="button" class="setup-link" data-act="back">Back</button>
+        </div>
+        <div class="step" data-step="online" hidden>
+          <h2 class="setup-title">Online</h2>
+          <div id="online" hidden>
+            <div id="net-lobby" class="net-view">
+              <button id="net-host" type="button">Host a game</button>
+              <span class="net-or">or</span>
+              <form id="net-join" class="net-join">
+                <input id="net-code" maxlength="6" placeholder="Enter code" autocomplete="off" spellcheck="false" aria-label="Game code">
+                <button type="submit">Join</button>
+              </form>
+            </div>
+            <div id="net-wait" class="net-view" hidden>
+              <span class="net-label">Your code</span>
+              <div id="net-code-show" class="net-code"></div>
+              <div class="net-row">
+                <button id="net-copy-code" type="button">Copy code</button>
+                <button id="net-copy-link" type="button">Copy link</button>
+                <button id="net-cancel" type="button">Cancel</button>
+              </div>
+            </div>
+            <div id="net-msg" aria-live="polite"></div>
+            <button id="net-rejoin" type="button" hidden>Rejoin</button>
+          </div>
+          <button type="button" class="setup-link" data-act="back" id="online-back">Back</button>
+        </div>
       </div>
       <div id="game-description" role="tooltip">
         <p>Experimental variant on a 9×9 board made of nine 3×3 quadrants.</p>
@@ -39,41 +95,9 @@
   <section id="match">
     <div id="status" aria-live="polite"></div>
     <div id="reveal" hidden></div>
-    <div id="online" hidden>
-      <div id="net-lobby" class="net-view">
-        <button id="net-host" type="button">Host a game</button>
-        <span class="net-or">or</span>
-        <form id="net-join" class="net-join">
-          <input id="net-code" maxlength="6" placeholder="Enter code" autocomplete="off" spellcheck="false" aria-label="Game code">
-          <button type="submit">Join</button>
-        </form>
-      </div>
-      <div id="net-wait" class="net-view" hidden>
-        <span class="net-label">Your code</span>
-        <div id="net-code-show" class="net-code"></div>
-        <div class="net-row">
-          <button id="net-copy-code" type="button">Copy code</button>
-          <button id="net-copy-link" type="button">Copy link</button>
-          <button id="net-cancel" type="button">Cancel</button>
-        </div>
-      </div>
-      <div id="net-msg" aria-live="polite"></div>
-      <button id="net-rejoin" type="button" hidden>Rejoin</button>
-    </div>
+    <button id="rematch" type="button" hidden>Rematch</button>
   </section>
 
-  <footer id="controls">
-    <button id="new-game" type="button">New game</button>
-    <div id="mode" class="seg" role="radiogroup" aria-label="Opponent">
-      <button type="button" role="radio" data-mode="ai" aria-checked="true">vs AI</button>
-      <button type="button" role="radio" data-mode="pvp" aria-checked="false">2 players</button>
-      <button type="button" role="radio" data-mode="online" aria-checked="false">Online</button>
-    </div>
-    <div id="side" class="seg" role="radiogroup" aria-label="Your symbol">
-      <button type="button" role="radio" data-side="X" aria-checked="true">Play X</button>
-      <button type="button" role="radio" data-side="O" aria-checked="false">Play O</button>
-    </div>
-  </footer>
 
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="bot9.js"></script>
